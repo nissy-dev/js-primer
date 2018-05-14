@@ -13,8 +13,6 @@
     "install:gitbook": "gitbook install",
     "start": "gitbook serve",
     "build": "gitbook build",
-    "postbuild": "npm run workbox",
-    "workbox": "workbox injectManifest workbox-config.js",
     "eslint": "eslint source/ --cache",
     "eslint:fix": "eslint --fix source/ --cache",
     "textlint": "summary-to-path ./source/README.md | xargs textlint -f pretty-error --cache",
