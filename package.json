@@ -57,6 +57,7 @@
     "gitbook-plugin-include-codeblock": "^3.0.0",
     "gitbook-plugin-js-console": "^1.4.2",
     "gitbook-plugin-page-toc-button": "^0.1.1",
+    "gitbook-plugin-workbox": "0.0.4",
     "gitbook-summary-to-path": "^1.0.1",
     "globby": "^6.0.0",
     "meow": "^5.0.0",
@@ -86,7 +87,5 @@
     "vm2": "^3.4.6",
     "workbox-cli": "^3.2.0"
   },
-  "dependencies": {
-    "gitbook-plugin-workbox": "0.0.4"
-  }
+  "dependencies": {}
 }
