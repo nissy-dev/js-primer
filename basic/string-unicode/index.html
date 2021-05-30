@@ -1,0 +1,1788 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <title>文字列とUnicode · JavaScript Primer #jsprimer</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="JavaScriptが採用している文字コードであるUnicodeと関連するStringのメソッドについて紹介します。Stringのメソッドや文字列を扱う上で、UTF-16でエンコードされていることを意識する場面について紹介します。">
+        <meta name="generator" content="HonKit 3.6.20">
+        
+        
+        
+    
+    <link rel="stylesheet" href="../../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-page-toc-button/plugin.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-anchors/plugin.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+         
+    
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="../wrapper-object/" />
+    
+    
+    <link rel="prev" href="../string/" />
+    
+
+    <link rel="canonical" href="https://jsprimer.net/basic/string-unicode/">
+
+<meta name="google-site-verification" content="bMotEbgYwkzA3k4PkuyK_NUdz0bKh-Phz0oUwNmRSVo" />
+<style>
+    /*
+     * Disable antialias
+     */
+    * {
+        -webkit-font-smoothing: initial !important
+    }
+
+    body {
+        text-rendering: initial !important;
+        font-smoothing: initial !important;
+    }
+
+    /* deny access chapter */
+    .summary li.chapter>span {
+        cursor: not-allowed;
+        opacity: .3;
+    }
+
+    /* console ui */
+
+    .mirror-console-attach-button-wrapper {
+        margin-top: -1.275em;
+        margin-bottom: 1.275em
+    }
+
+    .mirror-console-wrapper {
+        margin-top: 1.275em;
+        margin-bottom: 1.275em
+    }
+
+    /* file name for codeblock */
+    .code-filename {
+        background-color: #eee;
+        display: inline-block;
+        padding: 2px 8px;
+        line-height: inherit;
+        margin-bottom: 0px !important;
+    }
+    /* Markdown */
+    .markdown-section sup, .markdown-section sub {
+        font-size: 75%;
+    }
+
+    .book_footer{
+        text-align: center;
+        color: #000000;
+        background: #ddd;
+        font-size: 16px;
+        margin-top: 16px;
+        padding: 16px;
+    }
+
+    /* github-issue-feedback */
+    .gitbook-plugin-github-issue-feedback {
+        background-color: #333;
+        color: #fff;
+        opacity: 0.8;
+        padding: 4px;
+        margin-right: 24px;
+        margin-bottom: 4px;
+        border-radius: 6px;
+    }
+
+    .gitbook-plugin-github-issue-feedback:hover {
+        opacity: 1;
+    }
+
+    /* Hide footer on mobile */
+    /* Use navigation width */
+    @media (max-width: 1240px) {
+        .book_footer {
+            display: none;
+        }
+    }
+
+    .navigation {
+        min-width: 50px;
+    }
+</style>
+<meta name="theme-color" content="#ffffff">
+<link rel="manifest" href="../../manifest.json">
+<script>
+    if ("serviceWorker" in navigator) {
+        const isLocalhost = Boolean(
+            // preview
+            /netlify.com/.test(window.location.hostname) ||
+            // local
+            window.location.hostname === "localhost" ||
+            // [::1] is the IPv6 localhost address.
+            window.location.hostname === "[::1]" ||
+            // 127.0.0.1/8 is considered localhost for IPv4.
+            window.location.hostname.match(/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/)
+        );
+        if (!isLocalhost) {
+            window.addEventListener("load", () => {
+                navigator.serviceWorker.register("../../sw.js");
+            });
+        }
+    }
+</script>
+
+    </head>
+    <body>
+        
+<div class="book honkit-cloak">
+    <div class="book-summary">
+        
+            
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../../">
+            
+                <a href="../../">
+            
+                    
+                    この書籍について
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="../../intro/">
+            
+                <a href="../../intro/">
+            
+                    
+                    はじめに
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.2.1" data-path="../../intro/authors/">
+            
+                <a href="../../intro/authors/">
+            
+                    
+                    著者紹介
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.2" data-path="../../intro/preparation/">
+            
+                <a href="../../intro/preparation/">
+            
+                    
+                    読み始める前の事前準備
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.3" data-path="../../intro/feedback/">
+            
+                <a href="../../intro/feedback/">
+            
+                    
+                    文章の間違いに気づいたら
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    第一部: 基本文法
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.3.1" data-path="../introduction/">
+            
+                <a href="../introduction/">
+            
+                    
+                    JavaScriptとは
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2" data-path="../comments/">
+            
+                <a href="../comments/">
+            
+                    
+                    コメント
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.3" data-path="../variables/">
+            
+                <a href="../variables/">
+            
+                    
+                    変数と宣言
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.4" data-path="../read-eval-print/">
+            
+                <a href="../read-eval-print/">
+            
+                    
+                    値の評価と表示
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.5" data-path="../data-type/">
+            
+                <a href="../data-type/">
+            
+                    
+                    データ型とリテラル
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.6" data-path="../operator/">
+            
+                <a href="../operator/">
+            
+                    
+                    演算子
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.7" data-path="../implicit-coercion/">
+            
+                <a href="../implicit-coercion/">
+            
+                    
+                    暗黙的な型変換
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.8" data-path="../function-declaration/">
+            
+                <a href="../function-declaration/">
+            
+                    
+                    関数と宣言
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.9" data-path="../statement-expression/">
+            
+                <a href="../statement-expression/">
+            
+                    
+                    文と式
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.10" data-path="../condition/">
+            
+                <a href="../condition/">
+            
+                    
+                    条件分岐
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.11" data-path="../loop/">
+            
+                <a href="../loop/">
+            
+                    
+                    ループと反復処理
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.12" data-path="../object/">
+            
+                <a href="../object/">
+            
+                    
+                    オブジェクト
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.13" data-path="../prototype-object/">
+            
+                <a href="../prototype-object/">
+            
+                    
+                    プロトタイプオブジェクト
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.14" data-path="../array/">
+            
+                <a href="../array/">
+            
+                    
+                    配列
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.15" data-path="../string/">
+            
+                <a href="../string/">
+            
+                    
+                    文字列
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="1.3.16" data-path="./">
+            
+                <a href="./">
+            
+                    
+                    文字列とUnicode
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.17" data-path="../wrapper-object/">
+            
+                <a href="../wrapper-object/">
+            
+                    
+                    ラッパーオブジェクト
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.18" data-path="../function-scope/">
+            
+                <a href="../function-scope/">
+            
+                    
+                    関数とスコープ
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.19" data-path="../function-this/">
+            
+                <a href="../function-this/">
+            
+                    
+                    関数とthis
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.20" data-path="../class/">
+            
+                <a href="../class/">
+            
+                    
+                    クラス
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.21" data-path="../error-try-catch/">
+            
+                <a href="../error-try-catch/">
+            
+                    
+                    例外処理
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.22" data-path="../async/">
+            
+                <a href="../async/">
+            
+                    
+                    非同期処理:コールバック/Promise/Async Function
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.23" data-path="../map-and-set/">
+            
+                <a href="../map-and-set/">
+            
+                    
+                    Map/Set
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.24" data-path="../json/">
+            
+                <a href="../json/">
+            
+                    
+                    JSON
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.25" data-path="../date/">
+            
+                <a href="../date/">
+            
+                    
+                    Date
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.26" data-path="../math/">
+            
+                <a href="../math/">
+            
+                    
+                    Math
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.27" data-path="../module/">
+            
+                <a href="../module/">
+            
+                    
+                    ECMAScriptモジュール
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.28" data-path="../ecmascript/">
+            
+                <a href="../ecmascript/">
+            
+                    
+                    ECMAScript
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.29" data-path="../other-parts/">
+            
+                <a href="../other-parts/">
+            
+                    
+                    第一部: おわりに
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4" data-path="../../use-case/">
+            
+                <a href="../../use-case/">
+            
+                    
+                    第二部: 応用編（ユースケース）
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.4.1" data-path="../../use-case/setup-local-env/">
+            
+                <a href="../../use-case/setup-local-env/">
+            
+                    
+                    アプリケーション開発の準備
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.2" data-path="../../use-case/ajaxapp/">
+            
+                <a href="../../use-case/ajaxapp/">
+            
+                    
+                    Ajax通信
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.4.2.1" data-path="../../use-case/ajaxapp/entrypoint/">
+            
+                <a href="../../use-case/ajaxapp/entrypoint/">
+            
+                    
+                    エントリーポイント
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.2.2" data-path="../../use-case/ajaxapp/http/">
+            
+                <a href="../../use-case/ajaxapp/http/">
+            
+                    
+                    HTTP通信
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.2.3" data-path="../../use-case/ajaxapp/display/">
+            
+                <a href="../../use-case/ajaxapp/display/">
+            
+                    
+                    データを表示する
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.2.4" data-path="../../use-case/ajaxapp/promise/">
+            
+                <a href="../../use-case/ajaxapp/promise/">
+            
+                    
+                    Promiseを活用する
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.3" data-path="../../use-case/nodecli/">
+            
+                <a href="../../use-case/nodecli/">
+            
+                    
+                    Node.jsでCLIアプリ
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.4.3.1" data-path="../../use-case/nodecli/helloworld/">
+            
+                <a href="../../use-case/nodecli/helloworld/">
+            
+                    
+                    Node.jsでHello World
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.3.2" data-path="../../use-case/nodecli/argument-parse/">
+            
+                <a href="../../use-case/nodecli/argument-parse/">
+            
+                    
+                    コマンドライン引数を処理する
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.3.3" data-path="../../use-case/nodecli/read-file/">
+            
+                <a href="../../use-case/nodecli/read-file/">
+            
+                    
+                    ファイルを読み込む
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.3.4" data-path="../../use-case/nodecli/md-to-html/">
+            
+                <a href="../../use-case/nodecli/md-to-html/">
+            
+                    
+                    MarkdownをHTMLに変換する
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.3.5" data-path="../../use-case/nodecli/refactor-and-unittest/">
+            
+                <a href="../../use-case/nodecli/refactor-and-unittest/">
+            
+                    
+                    ユニットテストを記述する
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.4" data-path="../../use-case/todoapp/">
+            
+                <a href="../../use-case/todoapp/">
+            
+                    
+                    Todoアプリ
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.4.4.1" data-path="../../use-case/todoapp/entrypoint/">
+            
+                <a href="../../use-case/todoapp/entrypoint/">
+            
+                    
+                    エントリーポイント
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.4.2" data-path="../../use-case/todoapp/app-structure/">
+            
+                <a href="../../use-case/todoapp/app-structure/">
+            
+                    
+                    アプリの構成要素
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.4.3" data-path="../../use-case/todoapp/form-event/">
+            
+                <a href="../../use-case/todoapp/form-event/">
+            
+                    
+                    Todoアイテムの追加を実装する
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.4.4" data-path="../../use-case/todoapp/event-model/">
+            
+                <a href="../../use-case/todoapp/event-model/">
+            
+                    
+                    イベントとモデル
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.4.5" data-path="../../use-case/todoapp/update-delete/">
+            
+                <a href="../../use-case/todoapp/update-delete/">
+            
+                    
+                    Todoアイテムの更新と削除を実装する
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.4.6" data-path="../../use-case/todoapp/final/">
+            
+                <a href="../../use-case/todoapp/final/">
+            
+                    
+                    Todoアプリのリファクタリング
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5" data-path="../../appendix/links/">
+            
+                <a href="../../appendix/links/">
+            
+                    
+                    付録: 参考リンク集
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.6" data-path="../../cheatsheet/">
+            
+                <a href="../../cheatsheet/">
+            
+                    
+                    付録: JavaScriptチートシート
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.7" data-path="../../outro/">
+            
+                <a href="../../outro/">
+            
+                    
+                    おわりに
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://github.com/honkit/honkit" target="blank" class="gitbook-link">
+            Published with HonKit
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                 
+                    
+
+<!-- Header -->
+<meta name="keywords" content="JavaScript,入門,入門書,チュートリアル,書籍,本,無料,Node.js,ブラウザ"/>
+<link rel="author" href="https://www.hatena.ne.jp/efcl/"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css"/>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js"></script>
+<style>
+    .book-header {
+        display: flex;
+        flex-direction: row;
+        background-color: #333;
+    }
+
+    /* link color */
+    .book-header a {
+        color: #fff;
+    }
+
+    /* hover color */
+    .book-header .btn:hover, .book-header .btn:focus, .book-header a:focus, .book-header a:hover {
+        color: hsla(0, 0%, 100%, 0.75) !important;
+    }
+
+    /* Mobile header fixed */
+    @media (max-width: 768px) {
+        /* Headerを固定する */
+        .book-header {
+            position: fixed;
+            width: 100%;
+        }
+
+        /* Icon only */
+        .book-header-title-img {
+            margin: auto 18px auto 0 !important;
+        }
+
+        .book-header-title-h {
+            display: none;
+        }
+
+        /* Header分のズレを入れる */
+        .page-wrapper {
+            padding-top: 60px;
+        }
+
+        /* github-issue-feedbackを非表示にする */
+        .gitbook-plugin-github-issue-feedback {
+            display: none;
+        }
+    }
+
+    /* Dynamic created by GitBook*/
+    .btn.pull-left.js-toolbar-action {
+        order: 1;
+    }
+
+    .book-header-title {
+        order: 2;
+        display: inline-flex;
+        flex-direction: row;
+        color: #fff;
+    }
+
+    .book-header-title:hover {
+        color: hsla(0, 0%, 100%, 0.75);
+    }
+
+    .book-header-title-img {
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        margin: auto 10px auto 0;
+    }
+
+    .book-header-title-h {
+        font-size: 20px;
+        margin: auto;
+        padding: 0;
+    }
+
+    .header-center {
+        order: 3;
+        display: inline-flex;
+        flex-direction: column;
+        justify-content: center;
+        /* self */
+        flex-grow: 1;
+        flex-shrink: 0;
+        flex-basis: auto;
+    }
+
+    .header-right {
+        order: 4;
+        display: inline-flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        /* icon size */
+        font-size: 24px;
+    }
+
+    .amazon-link, .github-link {
+        color: #fff;
+        /* Padding and make Vertical */
+        display: inline-flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding-left: 4px;
+        padding-right: 4px;
+    }
+
+    /* Desktop */
+    @media (min-width: 768px) {
+        .header-center {
+            align-items: center;
+        }
+
+        .header-right {
+            margin-right: 24px;
+        }
+    }
+
+    /* DocSearch */
+    @media (max-width: 768px) {
+        .algolia-autocomplete .ds-dropdown-menu {
+            max-width: calc(100vw - 32px) !important;
+            min-width: calc(100vw - 32px) !important;
+            width: calc(100vw - 32px) !important;
+            /* negative margin
+              This is absolute element
+              */
+            margin-left: -32px !important;
+        }
+
+        .algolia-autocomplete .algolia-docsearch-suggestion--content {
+            width: 100% !important;
+            padding-left: 0 !important;
+        }
+
+        .algolia-autocomplete .algolia-docsearch-suggestion--content:before {
+            display: none !important;
+        }
+
+        .algolia-autocomplete .algolia-docsearch-suggestion--subcategory-column {
+            display: none !important;
+        }
+
+        .algolia-autocomplete.algolia-autocomplete-right .ds-dropdown-menu {
+            right: inherit !important
+        }
+
+        .algolia-autocomplete.algolia-autocomplete-right .ds-dropdown-menu::before {
+            right: 50%;
+        }
+
+        .sbx-custom {
+            width: 92px !important;
+            padding: initial !important;
+        }
+
+        .amazon-link {
+            display: none;
+        }
+    }
+
+    /* SearchBox */
+    .searchbarWrapper {
+        height: 50px;
+    }
+
+
+    .sbx-custom {
+        display: inline-block;
+        position: relative;
+        min-width: 150px;
+        width: 300px;
+        max-width: 300px;
+        height: 33px;
+        white-space: nowrap;
+        box-sizing: border-box;
+        font-size: 14px;
+    }
+
+    .sbx-custom__wrapper {
+        width: 100%;
+        height: 100%;
+    }
+
+    .sbx-custom__input {
+        display: inline-block;
+        -webkit-transition: box-shadow .4s ease, background .4s ease;
+        transition: box-shadow .4s ease, background .4s ease;
+        border: 0;
+        border-radius: 5px;
+        box-shadow: inset 0 0 0 2px #CCCCCC;
+        background: #FFFFFF;
+        padding: 0 27px 0 33px;
+        width: 100%;
+        height: 100%;
+        vertical-align: middle;
+        white-space: normal;
+        font-size: inherit;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+    }
+
+    .sbx-custom__input::-webkit-search-decoration, .sbx-custom__input::-webkit-search-cancel-button, .sbx-custom__input::-webkit-search-results-button, .sbx-custom__input::-webkit-search-results-decoration {
+        display: none;
+    }
+
+    .sbx-custom__input:hover {
+        box-shadow: inset 0 0 0 2px #b3b3b3;
+    }
+
+    .sbx-custom__input:focus, .sbx-custom__input:active {
+        outline: 0;
+        box-shadow: inset 0 0 0 2px #4B54DE;
+        background: #FFFFFF;
+    }
+
+    .sbx-custom__input::-webkit-input-placeholder {
+        color: #BBBBBB;
+    }
+
+    .sbx-custom__input::-moz-placeholder {
+        color: #BBBBBB;
+    }
+
+    .sbx-custom__input:-ms-input-placeholder {
+        color: #BBBBBB;
+    }
+
+    .sbx-custom__input::placeholder {
+        color: #BBBBBB;
+    }
+
+    .sbx-custom__submit {
+        position: absolute;
+        top: 0;
+        right: inherit;
+        left: 0;
+        margin: 0;
+        border: 0;
+        border-radius: 4px 0 0 4px;
+        background-color: rgba(255, 255, 255, 0);
+        padding: 0;
+        width: 33px;
+        height: 100%;
+        vertical-align: middle;
+        text-align: center;
+        font-size: inherit;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+    .sbx-custom__submit::before {
+        display: inline-block;
+        margin-right: -4px;
+        height: 100%;
+        vertical-align: middle;
+        content: '';
+    }
+
+    .sbx-custom__submit:hover, .sbx-custom__submit:active {
+        cursor: pointer;
+    }
+
+    .sbx-custom__submit:focus {
+        outline: 0;
+    }
+
+    .sbx-custom__submit svg {
+        width: 17px;
+        height: 17px;
+        vertical-align: middle;
+        fill: #3A33D1;
+    }
+
+    .sbx-custom__reset {
+        display: none;
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        margin: 0;
+        border: 0;
+        background: none;
+        cursor: pointer;
+        padding: 0;
+        font-size: inherit;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        fill: rgba(0, 0, 0, 0.5);
+    }
+
+    .sbx-custom__reset:focus {
+        outline: 0;
+    }
+
+    .sbx-custom__reset svg {
+        display: block;
+        margin: 4px;
+        width: 17px;
+        height: 17px;
+    }
+
+    .sbx-custom__input:valid ~ .sbx-custom__reset {
+        display: block;
+        -webkit-animation-name: sbx-reset-in;
+        animation-name: sbx-reset-in;
+        -webkit-animation-duration: .15s;
+        animation-duration: .15s;
+    }
+
+    @-webkit-keyframes sbx-reset-in {
+        0% {
+            -webkit-transform: translate3d(-20%, 0, 0);
+            transform: translate3d(-20%, 0, 0);
+            opacity: 0;
+        }
+        100% {
+            -webkit-transform: none;
+            transform: none;
+            opacity: 1;
+        }
+    }
+
+    @keyframes sbx-reset-in {
+        0% {
+            -webkit-transform: translate3d(-20%, 0, 0);
+            transform: translate3d(-20%, 0, 0);
+            opacity: 0;
+        }
+        100% {
+            -webkit-transform: none;
+            transform: none;
+            opacity: 1;
+        }
+    }
+</style>
+<div class="book-header" role="navigation">
+    
+    <a class="book-header-title" href="../..">
+        <img class="book-header-title-img" alt="JavaScript Primer"
+             src="../../gitbook/icons/icon-128x128.png"/>
+        <h2 class="book-header-title-h" title="JavaScript Primer - 迷わないための入門書">JavaScript Primer</h2>
+    </a>
+    <div class="searchbarWrapper header-center">
+        <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+            <symbol xmlns="http://www.w3.org/2000/svg" id="sbx-icon-search-8" viewBox="0 0 40 40">
+                <path d="M16 32c8.835 0 16-7.165 16-16 0-8.837-7.165-16-16-16C7.162 0 0 7.163 0 16c0 8.835 7.163 16 16 16zm0-5.76c5.654 0 10.24-4.586 10.24-10.24 0-5.656-4.586-10.24-10.24-10.24-5.656 0-10.24 4.584-10.24 10.24 0 5.654 4.584 10.24 10.24 10.24zM28.156 32.8c-1.282-1.282-1.278-3.363.002-4.643 1.282-1.284 3.365-1.28 4.642-.003l6.238 6.238c1.282 1.282 1.278 3.363-.002 4.643-1.283 1.283-3.366 1.28-4.643.002l-6.238-6.238z"
+                      fill-rule="evenodd"></path>
+            </symbol>
+            <symbol xmlns="http://www.w3.org/2000/svg" id="sbx-icon-clear-5" viewBox="0 0 20 20">
+                <path d="M10 20c5.523 0 10-4.477 10-10S15.523 0 10 0 0 4.477 0 10s4.477 10 10 10zm1.35-10.123l3.567 3.568-1.225 1.226-3.57-3.568-3.567 3.57-1.226-1.227 3.568-3.568-3.57-3.57 1.227-1.224 3.568 3.568 3.57-3.567 1.224 1.225-3.568 3.57zM10 18.272c4.568 0 8.272-3.704 8.272-8.272S14.568 1.728 10 1.728 1.728 5.432 1.728 10 5.432 18.272 10 18.272z"
+                      fill-rule="evenodd"></path>
+            </symbol>
+        </svg>
+
+        <form novalidate="novalidate" onsubmit="return false;" class="searchbox sbx-custom">
+            <div role="search" class="sbx-custom__wrapper">
+                <input name="search" placeholder="Search words" autocomplete="off" required="required"
+                       class="sbx-custom__input" type="search">
+                <button type="submit" title="Submit your search query." class="sbx-custom__submit">
+                    <svg role="img" aria-label="Search">
+                        <use xlink:href="#sbx-icon-search-8"></use>
+                    </svg>
+                </button>
+                <button type="reset" title="Clear the search query." class="sbx-custom__reset">
+                    <svg role="img" aria-label="Reset">
+                        <use xlink:href="#sbx-icon-clear-5"></use>
+                    </svg>
+                </button>
+            </div>
+        </form>
+    </div>
+    <div class="header-right">
+        <!-- Icon: https://www.iconfinder.com/iconsets/circle-payment -->
+        <a class="amazon-link" title="Amazon: JavaScript Primer 迷わないための入門書"
+           href="https://www.amazon.co.jp/dp/4048930737/" target="_blank"><img
+                width="22"
+                height="22"
+                style="margin: 1px;"
+                src="../../gitbook/icons/amazon-icon.png" alt=""></a>
+        <a class="github-link" title="GitHub: asciidwango/js-primer" href="https://github.com/asciidwango/js-primer"
+           target="_blank"><i
+                class="fa fa-github fa-fw"></i></a>
+    </div>
+</div>
+
+<script type="text/javascript">
+    document.querySelector(".searchbox [type=\"reset\"]").addEventListener("click", function() {
+        this.parentNode.querySelector("input").focus();
+    });
+</script>
+<script>
+    var search = docsearch({
+        apiKey: "fd28ebaba94be0c39fb9fa1b2fed4f23", // use a SEARCH-ONLY api key here
+        indexName: "asciidwango",
+        inputSelector: ".sbx-custom__input",
+        debug: false // set to `true` if you want to inspect the dropdown menu's CSS
+    });
+</script>
+<script>
+    window.addEventListener("DOMContentLoaded", function () {
+        gitbook.events.on("page.change", function () {
+            setTimeout(() => console.clear(), 1000);
+        });
+    });
+</script>
+<script type="text/javascript">
+    (function(){var t,e,n,r,a;for(t=function(){var t;return t=[],function(){var e,n,r,a;for(n=["init","start","stop","user","track","action","event","goal","chat","buy","page","view","admin","group","alias","ready","link","form","click","submit","cmd","emit","on","send","css","js","style","option","get","set","collection"],e=function(e){return function(){return t.push([e].concat(Array.prototype.slice.call(arguments,0)))}},r=0,a=[];r<n.length;)t[n[r]]=e(n[r]),a.push(r++);return a}(),t.init=function(e,n){var r,a;return t.api_key=e,t.options=n||{},a=document.createElement("script"),a.type="text/javascript",a.async=!0,a.charset="utf-8",a.src=t.options.tracker_url||"https://static.karte.io/libs/tracker.js",r=document.getElementsByTagName("script")[0],r.parentNode.insertBefore(a,r)},t},r=window.karte_tracker_names||["tracker"],e=0,n=r.length;n>e;e++)a=r[e],window[a]||(window[a]=t());tracker.init("a2d22604ec1d1c6d9d53d9d3eb87961d", { spa_mode: { reset_past_actions: true, close_actions: true }})}).call(this);
+    window.addEventListener("DOMContentLoaded", function(){
+        gitbook.events.on("page.change", function() {
+            tracker.view();
+        });
+    });
+</script>
+
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="string-unicode"><a name="string-unicode" class="plugin-anchor" href="#string-unicode"><i class="fa fa-link" aria-hidden="true"></i></a>文字列とUnicode </h1>
+<p>「<a href="../string/">文字列</a>」の章で紹介したように、JavaScriptは文字コードとしてUnicodeを採用し、エンコード方式としてUTF-16を採用しています。
+このUTF-16を採用しているのは、あくまでJavaScriptの内部で文字列を扱う際の文字コード（内部コード）です。
+そのため、コードを書いたファイル自体の文字コード（外部コード）は、UTF-8のようにUTF-16以外の文字コードであっても問題ありません。</p>
+<p>「<a href="../string/">文字列</a>」の章では、これらの文字コードは意識していなかったように、内部的にどのような文字コードで扱っているかは意識せずに文字列処理ができます。
+しかし、JavaScriptのStringオブジェクトにはこの文字コード（Unicode）に特化したAPIもあります。
+また、絵文字を含む特定の文字を扱う際や「文字数」を数えるという場合には、内部コードであるUTF-16を意識しないといけない場面があります。</p>
+<p>この章では、文字列におけるUnicodeを意識しないといけない場面について見ていきます。
+また、Unicode自体もECMAScriptと同じように歴史がある仕様であり、Unicodeのすべてを紹介するには膨大な文字列が必要になります。
+そのため、この章はJavaScriptにおけるUnicodeとUTF-16に話を限定しています。</p>
+<p>Unicodeの歴史を含めた文字コード自体について詳しく知りたい方は「<a href="https://gihyo.jp/book/2019/978-4-297-10291-3" target="_blank">プログラマのための文字コード技術入門</a>」や「<a href="http://www.rutles.net/products/detail.php?product_id=298" target="_blank">文字コード「超」研究</a>」等を参照してください。</p>
+<h2 id="code-point"><a name="code-point" class="plugin-anchor" href="#code-point"><i class="fa fa-link" aria-hidden="true"></i></a>Code Point </h2>
+<p>Unicodeはすべての文字（制御文字などの画面に表示されない文字も含む）に対してIDを定義する目的で策定されている仕様です。
+この「文字」に対する「一意のID」のことを<strong>Code Point</strong>（符号位置）と呼びます。</p>
+<p>Code Pointを扱うメソッドの多くは、ECMAScript 2015で追加されています。
+ES2015で追加された<code>String#codePointAt</code>メソッドや<code>String.fromCodePoint</code>メソッドを使うことで、文字列とCode Pointを相互変換できます。</p>
+<p><code>String#codePointAt</code>メソッド<sup>[ES2015]</sup>は、文字列の指定インデックスにある文字のCode Pointの値を返します。</p>
+<p><a class="gitbook-plugin-js-console" aria-hidden="true"></a></p>
+<pre><code class="lang-js"><span class="hljs-comment">// 文字列&quot;あ&quot;のCode Pointを取得</span>
+<span class="hljs-built_in">console</span>.log(<span class="hljs-string">&quot;あ&quot;</span>.codePointAt(<span class="hljs-number">0</span>)); <span class="hljs-comment">// =&gt; 12354</span>
+</code></pre>
+<p>一方の<code>String.fromCodePoint</code>メソッド<sup>[ES2015]</sup>は、指定したCode Pointに対応する文字を返します。</p>
+<p><a class="gitbook-plugin-js-console" aria-hidden="true"></a></p>
+<pre><code class="lang-js"><span class="hljs-comment">// Code Pointが`12354`の文字を取得する</span>
+<span class="hljs-built_in">console</span>.log(<span class="hljs-built_in">String</span>.fromCodePoint(<span class="hljs-number">12354</span>)); <span class="hljs-comment">// =&gt; &quot;あ&quot;</span>
+<span class="hljs-comment">// `12354`を16進数リテラルで表記しても同じ結果</span>
+<span class="hljs-built_in">console</span>.log(<span class="hljs-built_in">String</span>.fromCodePoint(<span class="hljs-number">0x3042</span>)); <span class="hljs-comment">// =&gt; &quot;あ&quot;</span>
+</code></pre>
+<p>また、文字列リテラル中にはUnicodeエスケープシーケンスで、直接Code Pointを書くこともできます。
+Code Pointは<code>\u{Code Pointの16進数の値}</code>のようにエスケープシーケンスとして記述できます。
+Unicodeエスケープシーケンスでは、Code Pointの16進数の値が必要となります。
+<code>Number#toString</code>メソッドの引数に基数となる<code>16</code>を渡すことで、16進数の文字列を取得できます。</p>
+<p><a class="gitbook-plugin-js-console" aria-hidden="true"></a></p>
+<pre><code class="lang-js"><span class="hljs-comment">// &quot;あ&quot;のCode Pointは12354</span>
+<span class="hljs-keyword">const</span> codePointOfあ = <span class="hljs-string">&quot;あ&quot;</span>.codePointAt(<span class="hljs-number">0</span>);
+<span class="hljs-comment">// 12354の16進数表現は&quot;3042&quot;</span>
+<span class="hljs-keyword">const</span> hexOfあ = codePointOfあ.toString(<span class="hljs-number">16</span>);
+<span class="hljs-built_in">console</span>.log(hexOfあ);<span class="hljs-comment">// =&gt; &quot;3042&quot;</span>
+<span class="hljs-comment">// Unicodeエスケープで&quot;あ&quot;を表現できる</span>
+<span class="hljs-built_in">console</span>.log(<span class="hljs-string">&quot;\u{3042}&quot;</span>); <span class="hljs-comment">// =&gt; &quot;あ&quot;</span>
+</code></pre>
+<h2 id="code-point-is-not-code-unit"><a name="code-point-is-not-code-unit" class="plugin-anchor" href="#code-point-is-not-code-unit"><i class="fa fa-link" aria-hidden="true"></i></a>Code PointとCode Unitの違い </h2>
+<p>Code Point（符号位置）について紹介しましたが、JavaScriptの文字列の構成要素はUTF-16で変換されたCode Unit（符号単位）です（詳細は「<a href="../string/">文字列</a>」の章を参照）。
+ある範囲の文字列については、Code Point（符号位置）とCode Unit（符号単位）は結果として同じ値となります。</p>
+<p>次のコードでは、<code>アオイ</code>という文字列の各要素をCode PointとCode Unitとして表示しています。
+<code>convertCodeUnits</code>関数は文字列をCode Unitの配列にし、<code>convertCodePoints</code>関数は文字列をCode Pointの配列にしています。それぞれの関数の実装はまだ理解しなくても問題ありません。</p>
+<p><a class="gitbook-plugin-js-console" aria-hidden="true"></a></p>
+<pre><code class="lang-js"><span class="hljs-comment">// 文字列をCode Unit(16進数)の配列にして返す</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">convertCodeUnits</span>(<span class="hljs-params">str</span>) </span>{
+    <span class="hljs-keyword">const</span> codeUnits = [];
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; str.length; i++) {
+        codeUnits.push(str.charCodeAt(i).toString(<span class="hljs-number">16</span>));
+    }
+    <span class="hljs-keyword">return</span> codeUnits;
+}
+<span class="hljs-comment">// 文字列をCode Point(16進数)の配列にして返す</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">convertCodePoints</span>(<span class="hljs-params">str</span>) </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">Array</span>.from(str).map(<span class="hljs-function"><span class="hljs-params">char</span> =&gt;</span> {
+        <span class="hljs-keyword">return</span> char.codePointAt(<span class="hljs-number">0</span>).toString(<span class="hljs-number">16</span>);
+    });
+}
+
+<span class="hljs-keyword">const</span> str = <span class="hljs-string">&quot;アオイ&quot;</span>;
+<span class="hljs-keyword">const</span> codeUnits = convertCodeUnits(str);
+<span class="hljs-built_in">console</span>.log(codeUnits); <span class="hljs-comment">// =&gt; [&quot;30a2&quot;, &quot;30aa&quot;, &quot;30a4&quot;]</span>
+<span class="hljs-keyword">const</span> codePoints = convertCodePoints(str);
+<span class="hljs-built_in">console</span>.log(codePoints); <span class="hljs-comment">// =&gt; [&quot;30a2&quot;, &quot;30aa&quot;, &quot;30a4&quot;]</span>
+</code></pre>
+<p>実行した結果をまとめてみると、この文字列においてはCode PointとCode Unitが同じ値になっていることがわかります。</p>
+<p><img src="img/codeunit-codepoint-table.png" alt="文字列におけるCode UnitとCode Pointの表"></p>
+<p>しかし、文字列によってはCode PointとCode Unitが異なる値となる場合があります。</p>
+<p>先ほどと同じ関数を使い、<code>リンゴ🍎</code>（リンゴの絵文字）という文字列を構成するCode UnitとCode Pointを見比べてみます。</p>
+<p><a class="gitbook-plugin-js-console" aria-hidden="true"></a></p>
+<pre><code class="lang-js"><span class="hljs-comment">// 文字列をCode Unit(16進数)の配列にして返す</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">convertCodeUnits</span>(<span class="hljs-params">str</span>) </span>{
+    <span class="hljs-keyword">const</span> codeUnits = [];
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; str.length; i++) {
+        codeUnits.push(str.charCodeAt(i).toString(<span class="hljs-number">16</span>));
+    }
+    <span class="hljs-keyword">return</span> codeUnits;
+}
+<span class="hljs-comment">// 文字列をCode Point(16進数)の配列にして返す</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">convertCodePoints</span>(<span class="hljs-params">str</span>) </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">Array</span>.from(str).map(<span class="hljs-function"><span class="hljs-params">char</span> =&gt;</span> {
+        <span class="hljs-keyword">return</span> char.codePointAt(<span class="hljs-number">0</span>).toString(<span class="hljs-number">16</span>);
+    });
+}
+
+<span class="hljs-keyword">const</span> str = <span class="hljs-string">&quot;リンゴ🍎&quot;</span>;
+<span class="hljs-keyword">const</span> codeUnits = convertCodeUnits(str);
+<span class="hljs-built_in">console</span>.log(codeUnits); <span class="hljs-comment">// =&gt; [&quot;30ea&quot;, &quot;30f3&quot;, &quot;30b4&quot;, &quot;d83c&quot;, &quot;df4e&quot;]</span>
+<span class="hljs-keyword">const</span> codePoints = convertCodePoints(str);
+<span class="hljs-built_in">console</span>.log(codePoints); <span class="hljs-comment">// =&gt; [&quot;30ea&quot;, &quot;30f3&quot;, &quot;30b4&quot;, &quot;1f34e&quot;]</span>
+</code></pre>
+<p>実行した結果をまとめてみると、この絵文字を含む文字列においてはCode PointとCode Unitが異なる値となることがわかります。</p>
+<p><img src="img/emoji-codeunit-codepoint-table.png" alt="絵文字を含んだ文字列におけるCode UnitとCode Pointの表"></p>
+<p>具体的には、Code Pointの要素数が4つなのに対して、Code Unitの要素数が5つになっています。
+また、Code Pointでは1つのCode Pointが<code>🍎</code>に対応していますが、Code Unitでは2つのCode Unitで<code>🍎</code>に対応しています。JavaScriptでは「文字列はCode Unitが順番に並んだもの」として扱われるためこの文字列の要素数（長さ）はCode Unitの個数である5つとなっています。</p>
+<p>ある1つの文字に対応するIDであるCode Pointを、16ビット（2バイト）のCode Unitで表現するのがUTF-16というエンコード方式です。しかし、16ビット（2バイト）で表現できる範囲は、65536種類（2の16乗）です。
+現在、Unicodeに登録されているCode Pointは10万種類を超えているため、すべての文字とCode Unitを1対1の関係で表すことができません。</p>
+<p>このような場合に、UTF-16では2つCode Unitの組み合わせ（合計4バイト）で1つの文字（1つのCode Point）を表現します。この仕組みを<strong>サロゲートペア</strong>と呼びます。</p>
+<h2 id="surrogate-pair"><a name="surrogate-pair" class="plugin-anchor" href="#surrogate-pair"><i class="fa fa-link" aria-hidden="true"></i></a>サロゲートペア </h2>
+<p>サロゲートペアでは、2つのCode Unitの組み合わせ（合計4バイト）で1つの文字（1つのCode Point）を表現します。UTF-16では、次の範囲をサロゲートペアに利用する領域としています。</p>
+<ul>
+<li><code>\uD800</code>～<code>\uDBFF</code>：上位サロゲートの範囲</li>
+<li><code>\uDC00</code>～<code>\uDFFF</code>：下位サロゲートの範囲</li>
+</ul>
+<p>文字列中に上位サロゲートと下位サロゲートのCode Unitが並んだ場合に、2つのCode Unitを組み合わせて1文字（Code Point）として扱います。</p>
+<p>次のコードでは、サロゲートペアの文字である「𩸽（ほっけ）」を次の2つのCode Unitで表現しています。
+Code Unitのエスケープシーケンス（<code>\uXXXX</code>）を2つ並べることで<code>𩸽</code>という文字を表現できます。
+一方で、ES2015からはCode Pointのエスケープシーケンス（<code>\u{XXXX}</code>）も書けるため、1つのCode Pointで<code>𩸽</code>という文字を表現できることもわかります。しかし、Code Pointのエスケープシーケンスで書いた場合でも、内部的にCode Unitに変換された値で保持されることは変わりません。</p>
+<p><a class="gitbook-plugin-js-console" aria-hidden="true"></a></p>
+<pre><code class="lang-js"><span class="hljs-comment">// 上位サロゲート + 下位サロゲートの組み合わせ</span>
+<span class="hljs-built_in">console</span>.log(<span class="hljs-string">&quot;\uD867\uDE3D&quot;</span>); <span class="hljs-comment">// =&gt; &quot;𩸽&quot;</span>
+<span class="hljs-comment">// Code Pointでの表現</span>
+<span class="hljs-built_in">console</span>.log(<span class="hljs-string">&quot;\u{29e3d}&quot;</span>); <span class="hljs-comment">// =&gt; &quot;𩸽&quot;</span>
+</code></pre>
+<p>先ほどの例で登場した<code>🍎</code>（リンゴの絵文字）もサロゲートペアで表現される文字です。</p>
+<p><a class="gitbook-plugin-js-console" aria-hidden="true"></a></p>
+<pre><code class="lang-js"><span class="hljs-comment">// Code Unit（上位サロゲート + 下位サロゲート）</span>
+<span class="hljs-built_in">console</span>.log(<span class="hljs-string">&quot;\uD83C\uDF4E&quot;</span>); <span class="hljs-comment">// =&gt; &quot;🍎&quot;</span>
+<span class="hljs-comment">// Code Point</span>
+<span class="hljs-built_in">console</span>.log(<span class="hljs-string">&quot;\u{1F34E}&quot;</span>); <span class="hljs-comment">// =&gt; &quot;🍎&quot;</span>
+</code></pre>
+<p>このようにサロゲートペアでは、2つのCode Unitで1つのCode Pointを表現します。</p>
+<p>基本的には、文字列はCode Unitが順番に並んでいるものとして扱われるため、多くの<code>String</code>のメソッドはCode Unitごとに作用します。
+また、インデックスアクセスもCode Unitごととなります。そのため、サロゲートペアで表現している文字列では、上位サロゲート（0番目）と下位サロゲート（1番目）へのインデックスアクセスになります。</p>
+<p><a class="gitbook-plugin-js-console" aria-hidden="true"></a></p>
+<pre><code class="lang-js"><span class="hljs-comment">// 内部的にはCode Unitが並んでいるものとして扱われている</span>
+<span class="hljs-built_in">console</span>.log(<span class="hljs-string">&quot;\uD867\uDE3D&quot;</span>); <span class="hljs-comment">// =&gt; &quot;𩸽&quot;</span>
+<span class="hljs-comment">// インデックスアクセスもCode Unitごととなる</span>
+<span class="hljs-built_in">console</span>.log(<span class="hljs-string">&quot;𩸽&quot;</span>[<span class="hljs-number">0</span>]); <span class="hljs-comment">// =&gt; &quot;\uD867&quot;</span>
+<span class="hljs-built_in">console</span>.log(<span class="hljs-string">&quot;𩸽&quot;</span>[<span class="hljs-number">1</span>]); <span class="hljs-comment">// =&gt; &quot;\uDE3D&quot;</span>
+</code></pre>
+<p>絵文字や「𩸽（ほっけ）」などのサロゲートペアで表現される文字が文字列中に含まれると、Code Unitごとに扱う文字列処理は複雑になります。</p>
+<p>たとえば、<code>String#length</code>プロパティは文字列におけるCode Unitの要素数を数えるため、<code>&quot;🍎&quot;.length</code>の結果は<code>2</code>となります。</p>
+<pre><code class="lang-js"><span class="hljs-built_in">console</span>.log(<span class="hljs-string">&quot;🍎&quot;</span>.length); <span class="hljs-comment">// =&gt; 2</span>
+</code></pre>
+<p>このような場合には、文字列をCode Pointごとに処理することを考える必要があります。</p>
+<h2 id="handle-code-point"><a name="handle-code-point" class="plugin-anchor" href="#handle-code-point"><i class="fa fa-link" aria-hidden="true"></i></a>Code Pointを扱う </h2>
+<p>文字列をCode Pointが順番に並んだものとして扱うには、Code Pointに対応したメソッドなどを利用する必要があります。</p>
+<p>ES2015から文字列をCode Pointごとに扱うメソッドや構文が追加されています。
+次に紹介するものは、文字列をCode Pointごとに扱います。</p>
+<ul>
+<li><code>CodePoint</code>を名前に含むメソッド</li>
+<li><code>u</code>（Unicode）フラグが有効化されている正規表現</li>
+<li>文字列のIteratorを扱うもの（Destructuring、<code>for...of</code>、<code>Array.from</code>メソッドなど）</li>
+</ul>
+<p>これらのCode Pointを扱う処理と具体的な使い方を見ていきます。</p>
+<h3 id="regexp-unicode"><a name="regexp-unicode" class="plugin-anchor" href="#regexp-unicode"><i class="fa fa-link" aria-hidden="true"></i></a>正規表現の<code>.</code>とUnicode </h3>
+<p>ES2015では、正規表現に<code>u</code>（Unicode）フラグが追加されました。
+この<code>u</code>フラグをつけた正規表現は、文字列をCode Pointが順番に並んだものとして扱います。</p>
+<p>具体的に<code>u</code>フラグの有無による<code>.</code>（改行文字以外のどの1文字にもマッチする特殊文字）の動作の違いを見ていきます。</p>
+<p><code>/(.)のひらき/</code>というパターンで<code>.</code>にマッチする部分を取り出すことを例に見ていきます。</p>
+<p>まずは、<code>u</code>フラグをつけていない正規表現と<code>String#match</code>メソッドでマッチした範囲を取り出してみます。<code>match</code>メソッドの返す値は<code>[マッチした全体の文字列, キャプチャされた文字列]</code>です（詳細は「<a href="../string/">文字列</a>」の章を参照）。</p>
+<p>実際にマッチした結果を見てみると、<code>.</code>は<code>𩸽</code>の下位サロゲートである<code>\ude3d</code>にマッチしていることがわかります（<code>\ude3d</code>は単独では表示できないため、文字化けのように表示されます）。</p>
+<p><a class="gitbook-plugin-js-console" aria-hidden="true"></a></p>
+<pre><code class="lang-js"><span class="hljs-keyword">const</span> [all, fish] = <span class="hljs-string">&quot;𩸽のひらき&quot;</span>.match(<span class="hljs-regexp">/(.)のひらき/</span>);
+<span class="hljs-built_in">console</span>.log(all); <span class="hljs-comment">// =&gt; &quot;\ude3dのひらき&quot;</span>
+<span class="hljs-built_in">console</span>.log(fish); <span class="hljs-comment">// =&gt; &quot;\ude3d&quot;</span>
+</code></pre>
+<p>つまり、<code>u</code>フラグをつけていない正規表現は、文字列をCode Unitが順番に並んだものとして扱っています。</p>
+<p>このような意図しない結果を避けるには、正規表現に<code>u</code>フラグをつけます。
+<code>u</code>フラグがついた正規表現は、文字列をCode Pointごとに扱います。
+そのため、任意の1文字にマッチする<code>.</code>が<code>𩸽</code>という文字（Code Point）にマッチします。</p>
+<p><a class="gitbook-plugin-js-console" aria-hidden="true"></a></p>
+<pre><code class="lang-js"><span class="hljs-keyword">const</span> [all, fish] = <span class="hljs-string">&quot;𩸽のひらき&quot;</span>.match(<span class="hljs-regexp">/(.)のひらき/u</span>);
+<span class="hljs-built_in">console</span>.log(all); <span class="hljs-comment">// =&gt; &quot;𩸽のひらき&quot;</span>
+<span class="hljs-built_in">console</span>.log(fish); <span class="hljs-comment">// =&gt; &quot;𩸽&quot;</span>
+</code></pre>
+<p>基本的には正規表現に<code>u</code>フラグをつけて問題となるケースは少ないはずです。
+なぜなら、サロゲートペアの片方だけにマッチしたい正規表現を書くケースはまれであるためです。</p>
+<!-- TODO: この文いらない可能性高い -->
+<h3 id="count-of-code-points"><a name="count-of-code-points" class="plugin-anchor" href="#count-of-code-points"><i class="fa fa-link" aria-hidden="true"></i></a>Code Pointの数を数える </h3>
+<p><code>String#length</code>プロパティは、文字列を構成するCode Unitの個数を表すプロパティです。
+そのためサロゲートペアを含む文字列では、<code>length</code>の結果が見た目より大きな値となる場合があります。</p>
+<p><a class="gitbook-plugin-js-console" aria-hidden="true"></a></p>
+<pre><code class="lang-js"><span class="hljs-comment">// Code Unitの個数を返す</span>
+<span class="hljs-built_in">console</span>.log(<span class="hljs-string">&quot;🍎&quot;</span>.length); <span class="hljs-comment">// =&gt; 2</span>
+<span class="hljs-built_in">console</span>.log(<span class="hljs-string">&quot;\uD83C\uDF4E&quot;</span>); <span class="hljs-comment">// =&gt; &quot;🍎&quot;</span>
+<span class="hljs-built_in">console</span>.log(<span class="hljs-string">&quot;\uD83C\uDF4E&quot;</span>.length); <span class="hljs-comment">// =&gt; 2</span>
+</code></pre>
+<p>JavaScriptには、文字列におけるCode Pointの個数を数えるメソッドは用意されていません。
+これを行うには、文字列をCode Pointごとに区切った配列へ変換して、配列の長さを数えるのが簡潔です。</p>
+<p><code>Array.from</code>メソッド<sup>[ES2015]</sup>は、引数にiterableなオブジェクトを受け取り、それを元にした新しい配列を返します。
+iterableオブジェクトとは<code>Symbol.iterator</code>という特別な名前のメソッドを実装したオブジェクトの総称で、<code>for...of</code>文などで反復処理が可能なオブジェクトです（詳細は「<a href="../loop/#for-of-statement">ループと反復処理のfor...of文</a>」を参照）。</p>
+<p>文字列もiterableオブジェクトであるため、<code>Array.from</code>メソッドによって1文字（厳密にはCode Point）ごとに区切った配列へと変換できます。先ほども紹介したように、文字列をiterableとして扱う場合はCode Pointごとに処理を行います。</p>
+<p><a class="gitbook-plugin-js-console" aria-hidden="true"></a></p>
+<pre><code class="lang-js"><span class="hljs-comment">// Code Pointごとの配列にする</span>
+<span class="hljs-comment">// Array.fromメソッドはIteratorを配列にする</span>
+<span class="hljs-keyword">const</span> codePoints = <span class="hljs-built_in">Array</span>.from(<span class="hljs-string">&quot;リンゴ🍎&quot;</span>);
+<span class="hljs-built_in">console</span>.log(codePoints); <span class="hljs-comment">// =&gt; [&quot;リ&quot;, &quot;ン&quot;, &quot;ゴ&quot;, &quot;🍎&quot;]</span>
+<span class="hljs-comment">// Code Pointの個数を数える</span>
+<span class="hljs-built_in">console</span>.log(codePoints.length); <span class="hljs-comment">// =&gt; 4</span>
+</code></pre>
+<p>しかし、Code Pointの数を数えた場合でも、直感的な結果にならない場合もあります。
+なぜなら、Code Pointには制御文字などの視覚的に見えないものも定義されているためです。
+そのため、文字として数えたくないものは無視するなど、視覚的な<strong>文字列の長さ</strong>を数えるにはさらなる工夫が必要になります。
+残念ながら、ビルトインメソッドにはこれらを簡単に扱う方法は用意されていません。</p>
+<h3 id="loop-each-code-point"><a name="loop-each-code-point" class="plugin-anchor" href="#loop-each-code-point"><i class="fa fa-link" aria-hidden="true"></i></a>Code Pointごとに反復処理をする </h3>
+<p>先ほど紹介した<code>Array.from</code>メソッドを使えば、文字列をCode Pointで区切った文字の配列へと変換できます。
+配列にすれば、あとは「<a href="../loop/">ループと反復処理</a>」の章で学んだ方法を使って、Code Pointごとに反復処理ができます。</p>
+<p>次のコードでは、文字列中に登場する<code>🍎</code>の個数を数えています。
+<code>countOfCodePoints</code>関数は、<code>Array.from</code>でCode Pointごとの配列にし、配列を<code>codePoint</code>でフィルターした結果できた配列の要素数を返します。</p>
+<p><a class="gitbook-plugin-js-console" aria-hidden="true"></a></p>
+<pre><code class="lang-js"><span class="hljs-comment">// 指定した`codePoint`の個数を数える</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">countOfCodePoints</span>(<span class="hljs-params">str, codePoint</span>) </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">Array</span>.from(str).filter(<span class="hljs-function"><span class="hljs-params">item</span> =&gt;</span> {
+        <span class="hljs-keyword">return</span> item === codePoint;
+    }).length;
+}
+<span class="hljs-built_in">console</span>.log(countOfCodePoints(<span class="hljs-string">&quot;🍎🍇🍎🥕🍒&quot;</span>, <span class="hljs-string">&quot;🍎&quot;</span>)); <span class="hljs-comment">// =&gt; 2</span>
+</code></pre>
+<p><code>for...of</code>による反復処理も文字列をCode Pointごとに扱えます。
+これは、<code>for...of</code>文が対象をIteratorとして列挙するためです。</p>
+<p>先ほどのコードと同じ<code>countOfCodePoints</code>関数を<code>for...of</code>を使って実装してみます。</p>
+<p><a class="gitbook-plugin-js-console" aria-hidden="true"></a></p>
+<pre><code class="lang-js"><span class="hljs-comment">// 指定した`codePoint`の個数を数える</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">countOfCodePoints</span>(<span class="hljs-params">str, codePoint</span>) </span>{
+    <span class="hljs-keyword">let</span> count = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> item <span class="hljs-keyword">of</span> str) {
+        <span class="hljs-keyword">if</span> (item === codePoint) {
+            count++;
+        }
+    }
+    <span class="hljs-keyword">return</span> count;
+}
+<span class="hljs-built_in">console</span>.log(countOfCodePoints(<span class="hljs-string">&quot;🍎🍇🍎🥕🍒&quot;</span>, <span class="hljs-string">&quot;🍎&quot;</span>)); <span class="hljs-comment">// =&gt; 2</span>
+</code></pre>
+<h2 id="conclusion"><a name="conclusion" class="plugin-anchor" href="#conclusion"><i class="fa fa-link" aria-hidden="true"></i></a>終わりに </h2>
+<p>この章では、文字列とUnicodeの関係について簡潔に紹介しました。
+Unicodeにはこの章で紹介しきれなかった表現もあります。
+また、JavaScriptにはUnicodeをキレイに扱うAPIが用意されているとは言い切れない部分もあります。</p>
+<p>一方で「<a href="../string/">文字列</a>」の章で紹介したように、Code UnitやCode Pointを意識しなくても柔軟で強力な文字列処理ができます。
+しかし、近年は絵文字を利用するケースが多くなったため、Code Pointを意識したプログラミングが必要となるケースも増えています。</p>
+<p>UnicodeはECMAScriptとは独立した仕様であるため、文字列を扱う悩みはプログラミング言語を問わずに出てくる共通の課題です。
+特にJavaはJavaScriptと同じくUTF-16をエンコード方式として採用しているため、類似する問題が見られます。
+そのため、JavaScriptで文字列処理の問題にぶつかった際には、他の言語ではどうしているかを調べることも重要です。</p>
+
+                                
+                                </section>
+                            
+                        </div>
+                    </div>
+                
+<footer class="book_footer">
+    <p>Copyright (c) 2016-present <a href="https://github.com/asciidwango/js-primer">jsprimer project</a></p>
+</footer>
+
+            </div>
+
+            
+                
+                <a href="../string/" class="navigation navigation-prev " aria-label="Previous page: 文字列">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="../wrapper-object/" class="navigation navigation-next " aria-label="Next page: ラッパーオブジェクト">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"author":"azu","description":"JavaScriptが採用している文字コードであるUnicodeと関連するStringのメソッドについて紹介します。Stringのメソッドや文字列を扱う上で、UTF-16でエンコードされていることを意識する場面について紹介します。","title":"文字列とUnicode","level":"1.3.16","depth":2,"next":{"title":"ラッパーオブジェクト","level":"1.3.17","depth":2,"path":"basic/wrapper-object/README.md","ref":"./basic/wrapper-object/README.md","articles":[]},"previous":{"title":"文字列","level":"1.3.15","depth":2,"path":"basic/string/README.md","ref":"./basic/string/README.md","articles":[]},"dir":"ltr"},"config":{"plugins":["-search","-lunr","page-toc-button","include-codeblock","anchors","canonical-link","ga","js-console","github-issue-feedback"],"root":"./source/","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"docSearch":{"apiKey":"fd28ebaba94be0c39fb9fa1b2fed4f23","index":"asciidwango"},"github-issue-feedback":{"repo":"asciidwango/js-primer","label":"問題を報告する"},"fontsettings":{"theme":"white","family":"sans","size":2},"js-console":{},"canonical-link":{"baseURL":"https://jsprimer.net"},"highlight":{},"page-toc-button":{"maxTocDepth":2,"minTocSize":2},"ga":{"configuration":"auto","token":"UA-2184335-18"},"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"./resources/gitbook-plugin-include-codeblock.hbs","theme":"chrome","unindent":false},"edit-link":{"base":"https://github.com/asciidwango/js-primer/edit/master/source/","label":"Edit"},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"anchors":{}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"IPAexMincho","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"index.md","glossary":"GLOSSARY.md","summary":"README.md"},"variables":{"esversion":"2020","nodeversion":"14.15.0","npmversion":"6.14.8","triplebackticks":"```","console":"<a class=\"gitbook-plugin-js-console\" aria-hidden=\"true\"></a>"},"title":"JavaScript Primer #jsprimer","gitbook":">=3.0.0","description":"JavaScriptの基本的な書き方からアプリケーションの作成などのユースケースを学ぶための入門書です"},"file":{"path":"basic/string-unicode/README.md","mtime":"2021-05-30T10:01:48.930Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2021-05-30T10:02:39.023Z"},"basePath":"../..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <noscript>
+        <style>
+            .honkit-cloak {
+                display: block !important;
+            }
+        </style>
+    </noscript>
+    <script>
+        // Restore sidebar state as critical path for prevent layout shift
+        function __init__getSidebarState(defaultValue){
+            var baseKey = "";
+            var key = baseKey + ":sidebar";
+            try {
+                var value = localStorage[key];
+                if (value === undefined) {
+                    return defaultValue;
+                }
+                var parsed = JSON.parse(value);
+                return parsed == null ? defaultValue : parsed;
+            } catch (e) {
+                return defaultValue;
+            }
+        }
+        function __init__restoreLastSidebarState() {
+            var isMobile = window.matchMedia("(max-width: 600px)").matches;
+            if (isMobile) {
+                // Init last state if not mobile
+                return;
+            }
+            var sidebarState = __init__getSidebarState(true);
+            var book = document.querySelector(".book");
+            // Show sidebar if it enabled
+            if (sidebarState && book) {
+                book.classList.add("without-animation", "with-summary");
+            }
+        }
+
+        try {
+            __init__restoreLastSidebarState();
+        } finally {
+            var book = document.querySelector(".book");
+            book.classList.remove("honkit-cloak");
+        }
+    </script>
+    <script src="../../gitbook/gitbook.js"></script>
+    <script src="../../gitbook/theme.js"></script>
+    
+        
+        <script src="../../gitbook/gitbook-plugin-page-toc-button/plugin.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-ga/plugin.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-js-console/console-ui.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-github-issue-feedback/plugin.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+
